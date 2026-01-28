@@ -2,11 +2,48 @@ import React, { useState } from "react";
 
 function Form(props) {
   const [product, setProduct] = useState(props.data);
+  const [error, setError] = useState({
+    name: "",
+    price: "",
+    category: "",
+  });
 
   let changeForm = (event) => {
     const { name, value } = event.target;
+    let errorMessage = "";
+    if (name === "name") {
+      const valid = /^[A-Za-z0-9]+$/.test(value);
+      if (value.trim() === "") {
+        errorMessage = "value cannot be empty";
+      } else if (!valid) {
+        errorMessage =
+          "only numbers and letters are allowed, special characters not allowed";
+      } else {
+        errorMessage = "";
+      }
+    } else if (name === "price") {
+      let valid = value > 0;
+      if (!valid) {
+        errorMessage = "price should be greater than 0";
+      } else {
+        errorMessage = "";
+      }
+    }
     setProduct({ ...product, [name]: value });
+
+    setError((prev) => ({
+      ...prev,
+      [name]: errorMessage,
+    }));
   };
+
+  let isenabled =
+    product.name &&
+    product.price &&
+    product.category &&
+    !error.name &&
+    !error.price &&
+    !error.category;
 
   return (
     <div className="form-overlay">
@@ -20,7 +57,12 @@ function Form(props) {
             name="name"
             placeholder="Enter Name"
             onChange={changeForm}
+            required
+            maxLength={20}
+            pattern="^(?=.*[A-Za-z0-9])[A-Za-z0-9 ]+$"
+            title="Only letters, numbers and spaces allowed. Cannot be empty."
           />
+          {error.name && <div style={{ color: "red" }}>{error.name}</div>}
         </div>
         <div className="form-group">
           <label>Price:</label>
@@ -31,7 +73,9 @@ function Form(props) {
             name="price"
             placeholder="Enter Price"
             onChange={changeForm}
+            required
           />
+          {error.price && <div style={{ color: "red" }}>{error.price}</div>}
         </div>
         <div className="form-group">
           <label>Category:</label>
@@ -41,6 +85,7 @@ function Form(props) {
             placeholder="Category"
             value={product.category}
             onChange={changeForm}
+            required
           >
             <option value={-1}></option>
             <option value={"mobiles"}>mobiles</option>
@@ -50,8 +95,8 @@ function Form(props) {
         </div>
         <button
           className="btn btn-primary float-end"
+          disabled={!isenabled}
           onClick={(e) => {
-            e.preventDefault();
             props.addProduct(product);
             props.closeForm();
           }}

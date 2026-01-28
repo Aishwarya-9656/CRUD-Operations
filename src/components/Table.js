@@ -5,17 +5,17 @@ function Table(props) {
     <table className="table m-3">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>S.No</th>
           <th>Name</th>
           <th>Price</th>
           <th>Category</th>
         </tr>
       </thead>
       <tbody>
-        {props.products.map((prod) => {
+        {props.products.map((prod, index) => {
           return (
             <tr key={prod.id}>
-              <td>{prod.id}</td>
+              <td>{index + 1}</td>
               <td>{prod.name}</td>
               <td>{prod.price}</td>
               <td>{prod.category}</td>

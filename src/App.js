@@ -18,35 +18,49 @@ function App() {
   }, []);
 
   let getProducts = async () => {
-    let res = await getData();
-    setProducts(res.data);
-    console.log(res);
-    console.log(res.data);
+    try {
+      let res = await getData();
+      setProducts(res.data);
+    } catch (error) {
+      console.log(error);
+      alert("failed fetching the products");
+    }
   };
 
   let deleteProducts = async (id) => {
-    await deleteData(id);
+    try {
+      alert("are you sure to delete this product");
+      await deleteData(id);
+    } catch (error) {
+      alert("failed to delete the product");
+    }
     getProducts();
   };
 
   let addProduct = async (product) => {
-    let data = {
-      name: product.name,
-      price: Number(product.price),
-      category: product.category,
-    };
+    try {
+      let data = {
+        name: product.name,
+        price: Number(product.price),
+        category: product.category,
+      };
 
-    if (edit) {
-      await putData(product.id, data);
-    } else {
-      await postData(data);
+      if (edit) {
+        await putData(product.id, data);
+        alert("product edited successfully");
+      } else {
+        await postData(data);
+        alert("product added successfully");
+      }
+      getProducts();
+      setOpenForm(false);
+      setEdit(false);
+    } catch (error) {
+      alert("failed to edit the product");
     }
-    getProducts();
-    setOpenForm(false);
-    setEdit(false);
   };
 
-  let editProduct = async (data) => {
+  let editProduct = (data) => {
     setInitialForm(data);
     setOpenForm(true);
     setEdit(true);
@@ -69,7 +83,7 @@ function App() {
   return (
     <div className="wrapper m-5 w-50">
       <h1 className="text-primary">crud operations</h1>
-      <button className="btn btn-primary" onClick={showForm}>
+      <button className="btn btn-primary float-end" onClick={showForm}>
         add products
       </button>
       <Table
