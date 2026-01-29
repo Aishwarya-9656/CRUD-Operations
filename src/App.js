@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "./components/Table";
 import Form from "./components/Form";
 import { getData, deleteData, postData, putData } from "./components/Api";
+import FilterPannel from "./components/FilterPannel";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,8 @@ function App() {
     price: "",
     category: "",
   });
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  let [FilteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     getProducts();
@@ -80,14 +83,31 @@ function App() {
     setOpenForm(false);
   };
 
+  const onFilterApply = () => {
+    if (selectedCategory.length === 0) {
+      return setFilteredProducts(products);
+    } else {
+      return setFilteredProducts(
+        products.filter((item) => {
+          return selectedCategory.includes(item.category);
+        }),
+      );
+    }
+  };
+
   return (
     <div className="wrapper m-5 w-50">
       <h1 className="text-primary">crud operations</h1>
       <button className="btn btn-primary float-end" onClick={showForm}>
         add products
       </button>
+      <FilterPannel
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        apply={onFilterApply}
+      />
       <Table
-        products={products}
+        products={FilteredProducts}
         deleteProducts={deleteProducts}
         editProduct={editProduct}
       ></Table>
