@@ -1,8 +1,10 @@
 import React from "react";
+import CategoryFilter from "./CategoryFilter";
+import PriceFilter from "./PriceFilter";
 
-const FilterPannel = ({ selectedCategory, setSelectedCategory, apply }) => {
+const FilterPannel = (props) => {
   const handleCategoryChange = (value) => {
-    setSelectedCategory((prev) => {
+    props.setSelectedCategory((prev) => {
       if (prev.includes(value)) {
         return prev.filter((item) => item !== value);
       } else {
@@ -14,44 +16,19 @@ const FilterPannel = ({ selectedCategory, setSelectedCategory, apply }) => {
   return (
     <div>
       <form action="">
-        <input
-          type="checkbox"
-          id="mobiles"
-          name="mobiles"
-          value="mobiles"
-          onChange={() => {
-            handleCategoryChange("mobiles");
-          }}
+        <CategoryFilter handleCategoryChange={handleCategoryChange} />
+        <br />
+        <br />
+        <PriceFilter
+          leastprice={props.leastprice}
+          setLeastPrice={props.setLeastPrice}
+          Highprice={props.Highprice}
+          setHighPrice={props.setHighPrice}
         />
-        <label htmlFor="mobiles"> Mobiles </label>
-        <br />
-        <input
-          type="checkbox"
-          id="earphones"
-          name="earphones"
-          value="earphones"
-          onChange={() => {
-            handleCategoryChange("earphones");
-          }}
-        />
-        <label htmlFor="earphones">EarPhones</label>
-        <br />
-        <input
-          type="checkbox"
-          id="watches"
-          name="watches"
-          value="watches"
-          onChange={() => {
-            handleCategoryChange("watches");
-          }}
-        />
-        <label htmlFor="watches">Watches</label>
-        <br />
-        <br />
         <button
           onClick={(e) => {
             e.preventDefault();
-            apply();
+            props.apply();
           }}
         >
           Apply

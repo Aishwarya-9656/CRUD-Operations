@@ -15,6 +15,8 @@ function App() {
   });
   const [selectedCategory, setSelectedCategory] = useState([]);
   let [FilteredProducts, setFilteredProducts] = useState([]);
+  const [leastprice, setLeastPrice] = useState();
+  const [Highprice, setHighPrice] = useState();
 
   useEffect(() => {
     getProducts();
@@ -24,6 +26,7 @@ function App() {
     try {
       let res = await getData();
       setProducts(res.data);
+      setFilteredProducts(res.data);
     } catch (error) {
       console.log(error);
       alert("failed fetching the products");
@@ -89,7 +92,17 @@ function App() {
     } else {
       return setFilteredProducts(
         products.filter((item) => {
-          return selectedCategory.includes(item.category);
+          let priceCondition =
+            item.price >= leastprice && item.price <= Highprice;
+          console.log(`priceCondition ${priceCondition}`);
+
+          let categoryCondition = selectedCategory.includes(item.category);
+          console.log(`categoryCondition ${categoryCondition}`);
+
+          let filterCondition = priceCondition && categoryCondition;
+          console.log(`filterCondition ${filterCondition}`);
+
+          return filterCondition;
         }),
       );
     }
@@ -105,6 +118,10 @@ function App() {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         apply={onFilterApply}
+        leastprice={leastprice}
+        setLeastPrice={setLeastPrice}
+        Highprice={Highprice}
+        setHighPrice={setHighPrice}
       />
       <Table
         products={FilteredProducts}
