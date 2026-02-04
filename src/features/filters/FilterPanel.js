@@ -19,12 +19,7 @@ const FilterPannel = (props) => {
         <CategoryFilter handleCategoryChange={handleCategoryChange} />
         <br />
         <br />
-        <PriceFilter
-          leastprice={props.leastprice}
-          setLeastPrice={props.setLeastPrice}
-          Highprice={props.Highprice}
-          setHighPrice={props.setHighPrice}
-        />
+        <PriceFilter />
         <button
           onClick={(e) => {
             e.preventDefault();

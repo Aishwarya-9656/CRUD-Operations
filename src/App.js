@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Table from "./components/Table";
-import Form from "./components/Form";
-import { getData, deleteData, postData, putData } from "./components/Api";
-import FilterPannel from "./components/FilterPannel";
+import Table from "./features/table/Table";
+import Form from "./shared/Form";
+import { getData, deleteData, postData, putData } from "./Api.js";
+import FilterPannel from "./features/filters/FilterPanel";
+import { useFilter } from "./context/FilterContext.js";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -15,8 +16,7 @@ function App() {
   });
   const [selectedCategory, setSelectedCategory] = useState([]);
   let [FilteredProducts, setFilteredProducts] = useState([]);
-  const [leastprice, setLeastPrice] = useState();
-  const [Highprice, setHighPrice] = useState();
+  const { leastprice, Highprice } = useFilter();
 
   useEffect(() => {
     getProducts();
@@ -87,24 +87,46 @@ function App() {
   };
 
   const onFilterApply = () => {
-    if (selectedCategory.length === 0) {
-      return setFilteredProducts(products);
-    } else {
-      return setFilteredProducts(
+    // only category filter applied
+    if (selectedCategory.length !== 0 && !Highprice && !leastprice) {
+      setFilteredProducts(
+        products.filter((item) => {
+          let categoryCondition = selectedCategory.includes(item.category);
+          return categoryCondition;
+        }),
+      );
+    }
+
+    // only price filter applied
+    else if (selectedCategory.length === 0 && (leastprice || Highprice)) {
+      setFilteredProducts(
         products.filter((item) => {
           let priceCondition =
             item.price >= leastprice && item.price <= Highprice;
-          console.log(`priceCondition ${priceCondition}`);
+          return priceCondition;
+        }),
+      );
+    }
+
+    // both category and price filters applied
+    else if (selectedCategory.length !== 0 && (leastprice || Highprice)) {
+      setFilteredProducts(
+        products.filter((item) => {
+          let priceCondition =
+            item.price >= leastprice && item.price <= Highprice;
 
           let categoryCondition = selectedCategory.includes(item.category);
-          console.log(`categoryCondition ${categoryCondition}`);
 
           let filterCondition = priceCondition && categoryCondition;
-          console.log(`filterCondition ${filterCondition}`);
 
           return filterCondition;
         }),
       );
+    }
+
+    //no filters applied
+    else if (selectedCategory.length === 0 && !leastprice && !Highprice) {
+      setFilteredProducts(products);
     }
   };
 
@@ -118,10 +140,6 @@ function App() {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         apply={onFilterApply}
-        leastprice={leastprice}
-        setLeastPrice={setLeastPrice}
-        Highprice={Highprice}
-        setHighPrice={setHighPrice}
       />
       <Table
         products={FilteredProducts}

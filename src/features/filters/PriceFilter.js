@@ -1,6 +1,9 @@
 import React from "react";
+import { useFilter } from "../../context/FilterContext";
 
 const PriceFilter = (props) => {
+  const { leastprice, setLeastPrice, Highprice, setHighPrice } = useFilter();
+
   return (
     <div>
       <div>Filter based on price </div>
@@ -11,21 +14,21 @@ const PriceFilter = (props) => {
         type="number"
         name="minimumPrice"
         placeholder="min price"
-        value={props.leastprice}
+        value={leastprice}
         onChange={(e) => {
-          props.setLeastPrice(e.target.value);
+          setLeastPrice(e.target.value);
         }}
       />
       <br />
 
       <label>Maximum price</label>
       <input
-        type="number" 
+        type="number"
         name="maximumPrice"
         placeholder="max price"
-        value={props.Highprice}
+        value={Highprice}
         onChange={(e) => {
-          props.setHighPrice(e.target.value);
+          setHighPrice(e.target.value);
         }}
       />
     </div>
