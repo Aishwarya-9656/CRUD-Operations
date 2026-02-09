@@ -4,6 +4,7 @@ import Form from "./shared/Form";
 import { getData, deleteData, postData, putData } from "./Api.js";
 import FilterPannel from "./features/filters/FilterPanel";
 import { useFilter } from "./context/FilterContext.js";
+import Pagination from "./features/pagination/Pagination.js";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -14,9 +15,21 @@ function App() {
     price: "",
     category: "",
   });
+
+  // filter variables
   const [selectedCategory, setSelectedCategory] = useState([]);
   let [FilteredProducts, setFilteredProducts] = useState([]);
   const { leastprice, Highprice } = useFilter();
+
+  // pagination variables
+  const [currentpage, setCurrentPage] = useState(1);
+  const itemsperpage = 3;
+  const totalpages = Math.ceil(products.length / itemsperpage);
+
+  const startindex = (currentpage - 1) * itemsperpage;
+  const endindex = startindex + itemsperpage;
+
+  const paginatedData = products.slice(startindex, endindex);
 
   useEffect(() => {
     getProducts();
@@ -142,10 +155,15 @@ function App() {
         apply={onFilterApply}
       />
       <Table
-        products={FilteredProducts}
+        products={paginatedData}
         deleteProducts={deleteProducts}
         editProduct={editProduct}
       ></Table>
+      <Pagination
+        totalpages={totalpages}
+        currentpage={currentpage}
+        setCurrentPage={setCurrentPage}
+      />
       {openform && (
         <Form
           closeForm={closeForm}

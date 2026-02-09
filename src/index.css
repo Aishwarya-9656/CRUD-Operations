@@ -24,9 +24,24 @@ form {
   border-radius: 5px;
 }
 
-form button{
+form button {
   margin: 20px 5px;
   padding: 5px;
   width: 80px;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination span {
+  border: 2px solid black;
+  display: flex;
+  margin: 10px;
+  padding: 10px 20px 20px 20px;
+}
+
+.pagination span.pagination-selected {
+  background-color: rgb(136, 105, 105);
+}
