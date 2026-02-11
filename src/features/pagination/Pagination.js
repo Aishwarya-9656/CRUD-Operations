@@ -1,27 +1,57 @@
 import React from "react";
 
 const Pagination = (props) => {
-  let paginationNumbers = Array(props.totalpages);
-
   let selectpageHandler = (selectedPage) => {
     props.setCurrentPage(selectedPage);
   };
 
+  const windowsize = 4;
+
+  let endpage = props.currentpage + 1;
+  if (endpage > props.totalpages) {
+    endpage = props.totalpages;
+  }
+
+  let startpage = endpage - (windowsize - 1);
+  if (startpage < 1) {
+    startpage = 1;
+  }
+
+  const pages = [];
+  for (let i = startpage; i <= endpage; i++) {
+    pages.push(i);
+  }
+
   return (
     <div className="pagination">
-      <span onClick={() => selectpageHandler(props.currentpage - 1)}>⏪</span>
-      {[...paginationNumbers].map((el, i) => {
+      <span
+        onClick={() => selectpageHandler(props.currentpage - 1)}
+        className={props.currentpage <= 1 ? "pagination-disabled" : ""}
+      >
+        ⏪
+      </span>
+      {pages.map((page, i) => {
         return (
           <span
-            key={i}
-            onClick={() => props.setCurrentPage(i + 1)}
-            className={props.currentpage === i + 1 ? "pagination-selected" : ""}
+            key={page}
+            onClick={(e) => {
+              e.stopPropagation();
+              props.setCurrentPage(page);
+            }}
+            className={props.currentpage === page ? "pagination-selected" : ""}
           >
-            {i + 1}
+            {page}
           </span>
         );
       })}
-      <span onClick={() => selectpageHandler(props.currentpage + 1)}>⏩</span>
+      <span
+        onClick={() => selectpageHandler(props.currentpage + 1)}
+        className={
+          props.currentpage >= props.totalpages ? "pagination-disabled" : ""
+        }
+      >
+        ⏩
+      </span>
     </div>
   );
 };

@@ -24,12 +24,12 @@ function App() {
   // pagination variables
   const [currentpage, setCurrentPage] = useState(1);
   const itemsperpage = 3;
-  const totalpages = Math.ceil(products.length / itemsperpage);
+  const totalpages = Math.ceil(FilteredProducts.length / itemsperpage);
 
   const startindex = (currentpage - 1) * itemsperpage;
   const endindex = startindex + itemsperpage;
 
-  const paginatedData = products.slice(startindex, endindex);
+  const paginatedData = FilteredProducts.slice(startindex, endindex);
 
   useEffect(() => {
     getProducts();
@@ -159,6 +159,7 @@ function App() {
         deleteProducts={deleteProducts}
         editProduct={editProduct}
       ></Table>
+      <br />
       <Pagination
         totalpages={totalpages}
         currentpage={currentpage}
