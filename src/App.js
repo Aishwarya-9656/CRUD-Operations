@@ -16,7 +16,16 @@ function App() {
     category: "",
   });
 
-  // filter variables
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const { leastprice, Highprice } = useFilter();
+
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 3;
+
+  /*
+ // filter variables
   const [selectedCategory, setSelectedCategory] = useState([]);
   let [FilteredProducts, setFilteredProducts] = useState([]);
   const { leastprice, Highprice } = useFilter();
@@ -30,21 +39,28 @@ function App() {
   const endindex = startindex + itemsperpage;
 
   const paginatedData = FilteredProducts.slice(startindex, endindex);
+  */
 
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [currentPage, selectedCategory, leastprice, Highprice]);
 
   let getProducts = async () => {
-    try {
-      let res = await getData();
-      setProducts(res.data);
-      setFilteredProducts(res.data);
-    } catch (error) {
-      console.log(error);
-      alert("failed fetching the products");
-    }
+    const res = await getData({
+      page: currentPage,
+      perPage: itemsPerPage,
+      category: selectedCategory,
+      minPrice: leastprice,
+      maxPrice: Highprice,
+    });
+    setProducts(res.data);
+    setTotalPages(res.totalPages);
+    console.log("Products:", res.data);
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, leastprice, Highprice]);
 
   let deleteProducts = async (id) => {
     try {
@@ -102,7 +118,7 @@ function App() {
   const onFilterApply = () => {
     // only category filter applied
     if (selectedCategory.length !== 0 && !Highprice && !leastprice) {
-      setFilteredProducts(
+      setProducts(
         products.filter((item) => {
           let categoryCondition = selectedCategory.includes(item.category);
           return categoryCondition;
@@ -112,7 +128,7 @@ function App() {
 
     // only price filter applied
     else if (selectedCategory.length === 0 && (leastprice || Highprice)) {
-      setFilteredProducts(
+      setProducts(
         products.filter((item) => {
           let priceCondition =
             item.price >= leastprice && item.price <= Highprice;
@@ -123,7 +139,7 @@ function App() {
 
     // both category and price filters applied
     else if (selectedCategory.length !== 0 && (leastprice || Highprice)) {
-      setFilteredProducts(
+      setProducts(
         products.filter((item) => {
           let priceCondition =
             item.price >= leastprice && item.price <= Highprice;
@@ -139,7 +155,7 @@ function App() {
 
     //no filters applied
     else if (selectedCategory.length === 0 && !leastprice && !Highprice) {
-      setFilteredProducts(products);
+      setProducts(products);
     }
   };
 
@@ -155,14 +171,14 @@ function App() {
         apply={onFilterApply}
       />
       <Table
-        products={paginatedData}
+        products={products}
         deleteProducts={deleteProducts}
         editProduct={editProduct}
       ></Table>
       <br />
       <Pagination
-        totalpages={totalpages}
-        currentpage={currentpage}
+        totalPages={totalPages}
+        currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
       {openform && (

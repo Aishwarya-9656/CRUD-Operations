@@ -5,7 +5,7 @@ const Pagination = (props) => {
     props.setCurrentPage(selectedPage);
   };
 
-  const windowsize = 4;
+  /*
 
   let endpage = props.currentpage + 1;
   if (endpage > props.totalpages) {
@@ -21,16 +21,19 @@ const Pagination = (props) => {
   for (let i = startpage; i <= endpage; i++) {
     pages.push(i);
   }
+    */
 
   return (
     <div className="pagination">
       <span
-        onClick={() => selectpageHandler(props.currentpage - 1)}
-        className={props.currentpage <= 1 ? "pagination-disabled" : ""}
+        onClick={() => selectpageHandler(props.currentPage - 1)}
+        className={props.currentPage <= 1 ? "pagination-disabled" : ""}
       >
         ⏪
       </span>
-      {pages.map((page, i) => {
+      {[...Array(props.totalPages)].map((_, i) => {
+        let page = i + 1;
+
         return (
           <span
             key={page}
@@ -38,16 +41,16 @@ const Pagination = (props) => {
               e.stopPropagation();
               props.setCurrentPage(page);
             }}
-            className={props.currentpage === page ? "pagination-selected" : ""}
+            className={props.currentPage === page ? "pagination-selected" : ""}
           >
             {page}
           </span>
         );
       })}
       <span
-        onClick={() => selectpageHandler(props.currentpage + 1)}
+        onClick={() => selectpageHandler(props.currentPage + 1)}
         className={
-          props.currentpage >= props.totalpages ? "pagination-disabled" : ""
+          props.currentPage >= props.totalpages ? "pagination-disabled" : ""
         }
       >
         ⏩
